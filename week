@@ -1,0 +1,55 @@
+import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class WorkHours {
+    public static void main(String[] args) throws ParseException {
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+        int totalPay = 0;  // รวมค่าจ้าง
+        int overtimeRate = 50;  // อัตราโอที
+
+        for (int i = 1; i <= 5; i++) {
+            // รับข้อมูลวัน-เวลาเข้า-ออก
+            System.out.print("Enter date for day " + i + " (dd/MM/yyyy): ");
+            String dateStr = scanner.nextLine();
+            System.out.print("Enter start time for day " + i + " (HH:mm): ");
+            String startTimeStr = scanner.nextLine();
+            System.out.print("Enter end time for day " + i + " (HH:mm): ");
+            String endTimeStr = scanner.nextLine();
+
+            Date startTime = timeFormat.parse(startTimeStr);
+            Date endTime = timeFormat.parse(endTimeStr);
+            
+            long diff = endTime.getTime() - startTime.getTime();
+            long hoursWorked = diff / (60 * 60 * 1000);  // คำนวณจำนวนชั่วโมง
+            long minutesWorked = (diff / (60 * 1000)) % 60;  // คำนวณจำนวนนาที
+            
+            // ปัดเวลา
+            if (minutesWorked >= 30) {
+                hoursWorked++;
+            }
+
+            // คำนวณโอทีหากเกิน 8 ชั่วโมง
+            int dayPay = 0;
+            if (hoursWorked >= 8) {
+                dayPay = (int) hoursWorked * 50;
+            } else {
+                dayPay = (int) hoursWorked * 50;  // ชั่วโมงตามปกติ
+                // หากทำงานไม่ถึง 8 ชั่วโมงหัก 50 บาท
+                if (hoursWorked < 8) {
+                    dayPay -= 50;
+                }
+            }
+            
+            // เพิ่มค่าจ้างในวันนั้น
+            totalPay += dayPay;
+
+            System.out.println("Worked hours: " + hoursWorked + " hours, Pay: " + dayPay + " baht");
+        }
+        
+        System.out.println("Total pay for 5 days: " + totalPay + " baht");
+    }
+}
